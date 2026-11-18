@@ -1,0 +1,236 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+}
+
+enum ProjectCategory {
+  NETWORKING
+  CCTV_SECURITY
+  GRAPHIC_DESIGN
+  E_COMMERCE
+  ICT
+  BUSINESS_PROJECTS
+}
+
+enum MediaKind {
+  IMAGE
+  DOCUMENT
+}
+
+model User {
+  id           String    @id @default(cuid()) @db.VarChar(30)
+  name         String    @db.VarChar(100)
+  email        String    @unique @db.VarChar(191)
+  passwordHash String    @db.VarChar(255)
+  role         UserRole  @default(ADMIN)
+  sessions     Session[]
+  media        Media[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Session {
+  id        String   @id @default(cuid()) @db.VarChar(30)
+  userId    String   @db.VarChar(30)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId, expiresAt])
+}
+
+model Project {
+  id             String          @id @default(cuid()) @db.VarChar(30)
+  title          String          @db.VarChar(160)
+  description    String          @db.Text
+  category       ProjectCategory
+  featuredImage  String?         @db.VarChar(2048)
+  equipment      Json?
+  projectDate    DateTime?
+  location       String?         @db.VarChar(160)
+  githubUrl      String?         @db.VarChar(2048)
+  liveUrl        String?         @db.VarChar(2048)
+  isFeatured     Boolean         @default(false)
+  isPublished    Boolean         @default(false)
+  images         ProjectImage[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([category, isPublished])
+  @@index([isFeatured, isPublished])
+}
+
+model ProjectImage {
+  id        String   @id @default(cuid()) @db.VarChar(30)
+  projectId String   @db.VarChar(30)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  mediaId   String?  @db.VarChar(30)
+  media     Media?   @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+  url       String   @db.VarChar(2048)
+  altText   String   @db.VarChar(250)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([projectId, sortOrder])
+}
+
+model SkillCategory {
+  id        String   @id @default(cuid()) @db.VarChar(30)
+  name      String   @unique @db.VarChar(100)
+  slug      String   @unique @db.VarChar(100)
+  sortOrder Int      @default(0)
+  skills    Skill[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Skill {
+  id          String        @id @default(cuid()) @db.VarChar(30)
+  name        String        @db.VarChar(140)
+  description String?       @db.VarChar(500)
+  sortOrder   Int           @default(0)
+  categoryId  String        @db.VarChar(30)
+  category    SkillCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([categoryId, name])
+  @@index([categoryId, sortOrder])
+}
+
+model Service {
+  id          String   @id @default(cuid()) @db.VarChar(30)
+  title       String   @db.VarChar(140)
+  description String   @db.VarChar(1000)
+  isPublished Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished, sortOrder])
+}
+
+model Experience {
+  id              String   @id @default(cuid()) @db.VarChar(30)
+  title           String   @db.VarChar(160)
+  company         String   @db.VarChar(180)
+  location        String   @db.VarChar(160)
+  startDate       DateTime
+  endDate         DateTime?
+  isCurrent       Boolean  @default(false)
+  isTrainee       Boolean  @default(false)
+  responsibilities Json
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([startDate, sortOrder])
+}
+
+model Education {
+  id          String   @id @default(cuid()) @db.VarChar(30)
+  degree      String   @db.VarChar(180)
+  institution String   @db.VarChar(180)
+  location    String   @db.VarChar(160)
+  startDate   DateTime
+  endDate     DateTime?
+  details     String?  @db.Text
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([startDate, sortOrder])
+}
+
+model Certificate {
+  id          String    @id @default(cuid()) @db.VarChar(30)
+  name        String    @db.VarChar(180)
+  issuer      String?   @db.VarChar(180)
+  issueDate   DateTime?
+  expiryDate  DateTime?
+  credentialUrl String? @db.VarChar(2048)
+  isPublished Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isPublished, issueDate])
+}
+
+model ContactMessage {
+  id        String    @id @default(cuid()) @db.VarChar(30)
+  name      String    @db.VarChar(100)
+  email     String    @db.VarChar(254)
+  subject   String    @db.VarChar(160)
+  message   String    @db.Text
+  ipHash    String?   @db.Char(64)
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([createdAt])
+  @@index([ipHash, createdAt])
+}
+
+model SiteSettings {
+  id               String   @id @default("site") @db.VarChar(30)
+  fullName         String   @db.VarChar(140)
+  headline         String   @db.VarChar(200)
+  biography        String   @db.Text
+  email            String   @db.VarChar(254)
+  phonePrimary     String   @db.VarChar(32)
+  phoneSecondary   String   @db.VarChar(32)
+  city             String   @db.VarChar(100)
+  country          String   @db.VarChar(100)
+  profileImageUrl  String?  @db.VarChar(2048)
+  cvUrl            String?  @db.VarChar(2048)
+  siteTitle        String   @db.VarChar(180)
+  siteDescription  String   @db.VarChar(320)
+  updatedAt        DateTime @updatedAt
+}
+
+model SocialLink {
+  id        String   @id @default(cuid()) @db.VarChar(30)
+  name      String   @unique @db.VarChar(80)
+  url       String   @db.VarChar(2048)
+  isVisible Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isVisible, sortOrder])
+}
+
+model Media {
+  id           String         @id @default(cuid()) @db.VarChar(30)
+  kind         MediaKind
+  fileName     String         @db.VarChar(255)
+  storageKey   String         @unique @db.VarChar(512)
+  url          String         @db.VarChar(2048)
+  mimeType     String         @db.VarChar(100)
+  sizeBytes    Int
+  altText      String?        @db.VarChar(250)
+  isPublic     Boolean        @default(false)
+  uploadedById String?        @db.VarChar(30)
+  uploadedBy   User?          @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  projectImages ProjectImage[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([kind, isPublic, createdAt])
+}
+
+model LoginAttempt {
+  id        String   @id @default(cuid()) @db.VarChar(30)
+  keyHash   String   @db.Char(64)
+  createdAt DateTime @default(now())
+
+  @@index([keyHash, createdAt])
+}
