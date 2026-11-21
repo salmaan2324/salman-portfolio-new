@@ -4,6 +4,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Salman Abdikarim Hussein | Executive CV",
   description: "Executive CV and Portfolio for Sales Manager and Business Manager",
+  icons: {
+    icon: "/images/salman-original.jpg",
+  },
 };
 
 export default function RootLayout({
