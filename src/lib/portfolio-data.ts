@@ -6,7 +6,7 @@ export const profile = {
   email: "Hzalmaan@gmail.com",
   phonePrimary: "+252 634877968",
   phoneSecondary: "+252 659112232",
-  portrait: "/images/salman-portrait-cutout.png",
+  portrait: "/images/salman-portrait.png",
   biography:
     "Motivated and adaptable ICT graduate with hands-on experience across sales management, business operations, digital marketing, customer relationships, graphic design, and technical infrastructure. Experienced in building client relationships, supporting commercial growth, and coordinating business and contracting operations.",
   focus:
