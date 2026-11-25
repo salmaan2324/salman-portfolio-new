@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en" data-theme="light">
       <body className="antialiased">
         <PortfolioNav />
-        <main className="mx-auto w-full max-w-[1240px] px-4 pt-7 pb-32 sm:px-7 sm:pt-10 sm:pb-36">
+        <main className="mx-auto w-full max-w-[1240px] px-4 pt-6 pb-28 sm:px-7 sm:pt-10 sm:pb-32">
           {children}
         </main>
         <footer className="border-t border-white/[0.07] px-4 pt-6 pb-28 text-center text-xs text-white/40">

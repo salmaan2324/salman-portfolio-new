@@ -47,6 +47,22 @@ export default function PortfolioNav() {
             </span>
           </Link>
 
+          <nav aria-label="Main navigation" className="hidden items-center gap-1 md:flex">
+            {navigation.map((item) => {
+              const active = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`rounded-full px-3.5 py-2 text-xs transition ${active ? "bg-white/10 font-semibold text-white" : "text-white/55 hover:bg-white/[0.06] hover:text-white"}`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -65,7 +81,7 @@ export default function PortfolioNav() {
 
       <nav
         aria-label="Portfolio pages"
-        className="bottom-navigation fixed inset-x-0 bottom-[calc(14px+env(safe-area-inset-bottom))] z-50 mx-auto flex w-fit max-w-[calc(100vw-20px)] items-center gap-0.5 overflow-x-auto rounded-full border border-white/10 bg-[#1d2935]/90 p-1.5 shadow-[0_12px_42px_rgba(0,0,0,0.42)] backdrop-blur-2xl sm:bottom-6 sm:gap-1 sm:p-2"
+        className="bottom-navigation fixed inset-x-0 bottom-[calc(14px+env(safe-area-inset-bottom))] z-50 mx-auto flex w-fit max-w-[calc(100vw-20px)] items-center gap-0.5 overflow-x-auto rounded-full border border-white/10 bg-[#1d2935]/90 p-1.5 shadow-[0_12px_42px_rgba(0,0,0,0.42)] backdrop-blur-2xl sm:bottom-6 sm:gap-1 sm:p-2 md:hidden"
       >
         {navigation.map((item) => {
           const active = pathname === item.href;
